@@ -1,0 +1,38 @@
+security:
+    encoders:
+        App\Entity\User:
+            algorithm: 'bcrypt'
+            cost: 12
+
+    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    providers:
+        from_database:
+            entity:
+                class: App\Entity\User
+                property: email
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            anonymous: true
+
+            provider: from_database
+            switch_user: true
+            form_login:
+                login_path: /login
+                check_path: login
+            guard:
+                authenticators:
+                    - App\Security\LoginFormAuthenticator
+            logout:
+                path: /logout
+                target: /login
+
+    role_hierarchy:
+        ROLE_TELEOPERATOR:   ROLE_USER
+#        ROLE_COMMERCIAL:  ROLE_USER
+#        ROLE_ADMIN:       [ROLE_TELEOPERATOR, ROLE_COMMERCIAL, ROLE_USER]
+#
+    access_control:
+        - { path: ^/login$, roles: [IS_AUTHENTICATED_ANONYMOUSLY] }
